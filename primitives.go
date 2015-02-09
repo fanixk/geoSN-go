@@ -17,13 +17,17 @@ func GetFriends(c *mgo.Collection, userid int) []User {
 
 func AreFriends(c *mgo.Collection, userid1 int, userid2 int) bool {
 	//we suppose if userid2 exists in users1 friends_list then the opposite holds true
+	//db.sm.count({   "$and": [ {userid: userid1}, { "friends_list":  { "$in": [ userid2 ] }}] })
 	count, err := c.Find(
 		bson.M{
 			"$and": []bson.M{
-				bson.M{"userid": userid1},
-				bson.M{"friends_list": bson.M{
-					"$in": []int{userid2},
+				bson.M{
+					"userid": userid1,
 				},
+				bson.M{
+					"friends_list": bson.M{
+						"$in": []int{userid2},
+					},
 				},
 			},
 		}).Count()
@@ -38,9 +42,7 @@ func AreFriends(c *mgo.Collection, userid1 int, userid2 int) bool {
 	return false
 }
 
-//db.sm.count({   "$and": [ {userid: 1}, { "friends_list":  { "$in": [3] }}] })
-
-func GetNearbyUsers(c *mgo.Collection, long float64, lat float64, scope int) []UserLocation {
+func RangeUsers(c *mgo.Collection, long float64, lat float64, scope int) []UserLocation {
 	var res []UserLocation
 
 	err := c.Find(bson.M{

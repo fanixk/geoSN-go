@@ -54,7 +54,7 @@ func main() {
 	lat := -33.690647
 	scope := 50000 // max distance in metres
 
-	results := GetNearbyUsers(colgm, long, lat, scope)
+	results := RangeUsers(colgm, long, lat, scope)
 	//results := GetFriends(colsm, 1)
 	//results := AreFriends(colsm, 1, 3) //false
 	//results := AreFriends(colsm, 1, 2) //true

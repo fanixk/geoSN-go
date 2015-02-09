@@ -24,7 +24,7 @@ type User struct {
 }
 
 type UserLocation struct {
-	ID       bson.ObjectId `bson:"_id,omitempty" json:"shopid"`
+	ID       bson.ObjectId `bson:"_id,omitempty" json:"_id"`
 	UserId   int           `bson:"userid" json:"userid"`
 	Location GeoJson       `bson:"location" json:"location"`
 }
@@ -32,18 +32,6 @@ type UserLocation struct {
 type GeoJson struct {
 	Type        string    `json:"-"`
 	Coordinates []float64 `json:"coordinates"`
-}
-
-func GetNearbyUsers(c *mgo.Collection, query bson.M) []UserLocation {
-	var res []UserLocation
-
-	err := c.Find(query).All(&res)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return res
 }
 
 func main() {
@@ -59,23 +47,17 @@ func main() {
 	// session.SetMode(mgo.Monotonic, true)
 
 	// query the database
-	c := session.DB("geosn").C("gm")
+	colgm := session.DB("geosn").C("gm")
+	//colsm := session.DB("geosn").C("sm")
 
 	long := 151.701642
 	lat := -33.690647
 	scope := 50000 // max distance in metres
 
-	results := GetNearbyUsers(c, bson.M{
-		"location": bson.M{
-			"$nearSphere": bson.M{
-				"$geometry": bson.M{
-					"type":        "Point",
-					"coordinates": []float64{long, lat},
-				},
-				"$maxDistance": scope,
-			},
-		},
-	})
+	results := GetNearbyUsers(colgm, long, lat, scope)
+	//results := GetFriends(colsm, 1)
+	//results := AreFriends(colsm, 1, 3) //false
+	//results := AreFriends(colsm, 1, 2) //true
 
 	// convert it to JSON so it can be displayed
 	formatter := json.MarshalIndent

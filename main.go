@@ -54,7 +54,12 @@ func main() {
 	lat := -33.690647
 	scope := 50000 // max distance in metres
 
-	results := RangeUsers(colgm, long, lat, scope)
+	//TODO: pass session instead of collection
+	//return actual result set instead of userids
+	//implement method that returns users when given an array of userids
+	//to be used as utility method
+
+	results := RangeFriends(colgm, 1, long, lat, scope)
 	//results := GetFriends(colsm, 1)
 	//results := AreFriends(colsm, 1, 3) //false
 	//results := AreFriends(colsm, 1, 2) //true

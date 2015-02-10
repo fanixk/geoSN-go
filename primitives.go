@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -94,14 +94,21 @@ func NearestUsers(c *mgo.Collection, long float64, lat float64, k int) []UserLoc
 }
 
 //User u, location q, radius r
-func RangeFriends(c *mgo.Collection, userid int, long float64, lat float64, r int) []UserLocation {
-	var resultSet []UserLocation
-	var friends []int
+//1.U = RangeUsers(q, r), R = ∅
+//2. For each user ui ∈ U
+//3. 	If AreFriends(u, ui), add ui into R
+//4. Return R
+func RangeFriends(c *mgo.Collection, userid int, long float64, lat float64, r int) []int {
+	var users []UserLocation
+	range_friends_list := make([]int, 0, 1)
 
-	friends = GetFriends(c, userid)
+	users = RangeUsers(c, long, lat, r)
 
-	for _, friend := range friends {
-		fmt.Println("Friends_list from RangeFriends %d", friend)
+	for _, user := range users {
+		if user.UserId == userid {
+			range_friends_list = append(range_friends_list, user.UserId)
+		}
 	}
-	return resultSet
+
+	return range_friends_list
 }

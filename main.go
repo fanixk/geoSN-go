@@ -47,23 +47,24 @@ func main() {
 	// session.SetMode(mgo.Monotonic, true)
 
 	// query the database
-	colgm := session.DB("geosn").C("gm")
+	db := session.DB("geosn")
 	//colsm := session.DB("geosn").C("sm")
 
 	long := 151.701642
 	lat := -33.690647
 	scope := 50000 // max distance in metres
 
-	//TODO: pass session instead of collection
+	//TODO:
 	//return actual result set instead of userids
 	//implement method that returns users when given an array of userids
 	//to be used as utility method
 
-	results := RangeFriends(colgm, 1, long, lat, scope)
-	//results := GetFriends(colsm, 1)
-	//results := AreFriends(colsm, 1, 3) //false
+	results := RangeFriends(db, 1, long, lat, scope)
+	//results := GetFriends(db, 1)
+	// results := AreFriends(db, 1, 3) //false
 	//results := AreFriends(colsm, 1, 2) //true
-
+	// results := RangeUsers(db, long, lat, scope)
+	//results := NearestUsers(db, long, lat, scope)
 	// convert it to JSON so it can be displayed
 	formatter := json.MarshalIndent
 	response, err := formatter(results, " ", "   ")

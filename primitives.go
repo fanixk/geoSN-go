@@ -6,11 +6,12 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func GetFriends(c *mgo.Collection, userid int) []int {
+func GetFriends(db *mgo.Database, userid int) []int {
 	var result []User
+	collection := db.C("sm")
 	friends_list := make([]int, 0, 1)
 
-	err := c.Find(bson.M{"userid": userid}).Select(bson.M{"friends_list": 1}).All(&result)
+	err := collection.Find(bson.M{"userid": userid}).Select(bson.M{"friends_list": 1}).All(&result)
 	if err != nil {
 		panic(err)
 	}
@@ -23,10 +24,11 @@ func GetFriends(c *mgo.Collection, userid int) []int {
 	return friends_list
 }
 
-func AreFriends(c *mgo.Collection, userid1 int, userid2 int) bool {
+func AreFriends(db *mgo.Database, userid1 int, userid2 int) bool {
+	collection := db.C("sm")
 	//we suppose if userid2 exists in users1 friends_list then the opposite holds true
 	//db.sm.count({   "$and": [ {userid: userid1}, { "friends_list":  { "$in": [ userid2 ] }}] })
-	count, err := c.Find(
+	count, err := collection.Find(
 		bson.M{
 			"$and": []bson.M{
 				bson.M{
@@ -50,10 +52,11 @@ func AreFriends(c *mgo.Collection, userid1 int, userid2 int) bool {
 	return false
 }
 
-func RangeUsers(c *mgo.Collection, long float64, lat float64, scope int) []UserLocation {
+func RangeUsers(db *mgo.Database, long float64, lat float64, scope int) []UserLocation {
 	var res []UserLocation
+	collection := db.C("gm")
 
-	err := c.Find(bson.M{
+	err := collection.Find(bson.M{
 		"location": bson.M{
 			"$nearSphere": bson.M{
 				"$geometry": bson.M{
@@ -72,10 +75,11 @@ func RangeUsers(c *mgo.Collection, long float64, lat float64, scope int) []UserL
 	return res
 }
 
-func NearestUsers(c *mgo.Collection, long float64, lat float64, k int) []UserLocation {
+func NearestUsers(db *mgo.Database, long float64, lat float64, k int) []UserLocation {
 	var res []UserLocation
+	collection := db.C("gm")
 
-	err := c.Find(bson.M{
+	err := collection.Find(bson.M{
 		"location": bson.M{
 			"$nearSphere": bson.M{
 				"$geometry": bson.M{
@@ -91,24 +95,4 @@ func NearestUsers(c *mgo.Collection, long float64, lat float64, k int) []UserLoc
 	}
 
 	return res
-}
-
-//User u, location q, radius r
-//1.U = RangeUsers(q, r), R = ∅
-//2. For each user ui ∈ U
-//3. 	If AreFriends(u, ui), add ui into R
-//4. Return R
-func RangeFriends(c *mgo.Collection, userid int, long float64, lat float64, r int) []int {
-	var users []UserLocation
-	range_friends_list := make([]int, 0, 1)
-
-	users = RangeUsers(c, long, lat, r)
-
-	for _, user := range users {
-		if user.UserId == userid {
-			range_friends_list = append(range_friends_list, user.UserId)
-		}
-	}
-
-	return range_friends_list
 }

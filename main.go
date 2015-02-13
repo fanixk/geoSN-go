@@ -8,10 +8,17 @@ import (
 	"log"
 )
 
+const (
+	DATABASE      = "geosn"
+	SM_COLLECTION = "sm"
+	GM_COLLECTION = "gm"
+)
+
 /* create queries
  * use geosn
  * db.sm.insert({userid: 1, friends_list: [2] })
  * db.gm.insert({userid: 1,  "location" : { "type" : "Point", "coordinates" : [ 151.20699, -33.867487 ] } })
+ * db.gm.insert({userid: 2,  "location" : { "type" : "Point", "coordinates" : [ 151.701642, -33.690647 ] } })
  * db.sm.ensureIndex({userid: true}, {unique: true})
  * db.gm.ensureIndex({userid: true}, {unique: true})
  * db.gm.ensureIndex({location:"2dsphere"})
@@ -47,24 +54,29 @@ func main() {
 	// session.SetMode(mgo.Monotonic, true)
 
 	// query the database
-	db := session.DB("geosn")
+	db := session.DB(DATABASE)
 	//colsm := session.DB("geosn").C("sm")
 
-	long := 151.701642
-	lat := -33.690647
-	scope := 50000 // max distance in metres
+	// long := 151.701642
+	// lat := -33.690647
+	// scope := 50000 // max distance in metres
+	// userid := 1
 
 	//TODO:
 	//return actual result set instead of userids
 	//implement method that returns users when given an array of userids
 	//to be used as utility method
+	//refactor structs for userlocation & add location struct
 
-	results := RangeFriends(db, 1, long, lat, scope)
-	//results := GetFriends(db, 1)
+	// results := RangeFriends(db, userid, long, lat, scope)
+	// results := GetFriends(db, 1)
+	results := GetUserLocation(db, 2)
 	// results := AreFriends(db, 1, 3) //false
-	//results := AreFriends(colsm, 1, 2) //true
+	// results := AreFriends(colsm, 1, 2) //true
 	// results := RangeUsers(db, long, lat, scope)
-	//results := NearestUsers(db, long, lat, scope)
+	// results := NearestUsers(db, long, lat, 5)
+	// results := NearestFriends(db, userid, long, lat, 5)
+
 	// convert it to JSON so it can be displayed
 	formatter := json.MarshalIndent
 	response, err := formatter(results, " ", "   ")

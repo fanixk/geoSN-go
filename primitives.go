@@ -8,7 +8,7 @@ import (
 
 func GetFriends(db *mgo.Database, userid int) []int {
 	var result []User
-	collection := db.C("sm")
+	collection := db.C(SM_COLLECTION)
 	friends_list := make([]int, 0, 1)
 
 	err := collection.Find(bson.M{"userid": userid}).Select(bson.M{"friends_list": 1}).All(&result)
@@ -25,7 +25,7 @@ func GetFriends(db *mgo.Database, userid int) []int {
 }
 
 func AreFriends(db *mgo.Database, userid1 int, userid2 int) bool {
-	collection := db.C("sm")
+	collection := db.C(SM_COLLECTION)
 	//we suppose if userid2 exists in users1 friends_list then the opposite holds true
 	//db.sm.count({   "$and": [ {userid: userid1}, { "friends_list":  { "$in": [ userid2 ] }}] })
 	count, err := collection.Find(
@@ -52,9 +52,21 @@ func AreFriends(db *mgo.Database, userid1 int, userid2 int) bool {
 	return false
 }
 
+func GetUserLocation(db *mgo.Database, userid int) UserLocation {
+	collection := db.C(GM_COLLECTION)
+	var location UserLocation
+	err := collection.Find(bson.M{"userid": userid}).One(&location)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return location
+}
+
 func RangeUsers(db *mgo.Database, long float64, lat float64, scope int) []UserLocation {
 	var res []UserLocation
-	collection := db.C("gm")
+	collection := db.C(GM_COLLECTION)
 
 	err := collection.Find(bson.M{
 		"location": bson.M{
@@ -77,7 +89,7 @@ func RangeUsers(db *mgo.Database, long float64, lat float64, scope int) []UserLo
 
 func NearestUsers(db *mgo.Database, long float64, lat float64, k int) []UserLocation {
 	var res []UserLocation
-	collection := db.C("gm")
+	collection := db.C(GM_COLLECTION)
 
 	err := collection.Find(bson.M{
 		"location": bson.M{

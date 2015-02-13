@@ -1,6 +1,7 @@
 package main
 
 import (
+	// "fmt"
 	"gopkg.in/mgo.v2"
 )
 
@@ -22,4 +23,31 @@ func RangeFriends(db *mgo.Database, userid int, long float64, lat float64, r int
 	}
 
 	return range_friends_list
+}
+
+/* Algorithm 3 (NF3) */
+// 1. R = ∅
+// 2. While |R| < k
+// 3. ui = NextNearestUser(q)
+// 4. If AreFriends(u, ui), add ui into R
+// 5. Return R
+func NearestFriends(db *mgo.Database, userid int, long float64, lat float64, k int) []int {
+	result_set := make([]int, 0, 1)
+	users := NearestUsers(db, long, lat, k)
+	index := 0
+
+	for len(result_set) < k {
+		if index == len(users) {
+			break
+		}
+
+		ui := users[index].UserId
+		index++
+
+		if AreFriends(db, userid, ui) {
+			result_set = append(result_set, ui)
+		}
+	}
+
+	return result_set
 }

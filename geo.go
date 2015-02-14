@@ -10,11 +10,11 @@ import (
 //2. For each user ui ∈ U
 //3.  If AreFriends(u, ui), add ui into R
 //4. Return R
-func RangeFriends(db *mgo.Database, userid int, long float64, lat float64, r int) []int {
+func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) []int {
 	var users []UserLocation
 	range_friends_list := make([]int, 0, 1)
 
-	users = RangeUsers(db, long, lat, r)
+	users = RangeUsers(db, coordinates, r)
 
 	for _, user := range users {
 		if user.UserId == userid {
@@ -31,18 +31,19 @@ func RangeFriends(db *mgo.Database, userid int, long float64, lat float64, r int
 // 3. ui = NextNearestUser(q)
 // 4. If AreFriends(u, ui), add ui into R
 // 5. Return R
-func NearestFriends(db *mgo.Database, userid int, long float64, lat float64, k int) []int {
-	result_set := make([]int, 0, 1)
-	users := NearestUsers(db, long, lat, k)
+func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int) []int {
+	result_set := make([]int, 0, 0)
 	index := 0
+	nearest_user_count := 1
 
 	for len(result_set) < k {
-		if index == len(users) {
+		users := NearestUsers(db, coordinates, nearest_user_count)
+		if nearest_user_count > len(users) {
 			break
 		}
 
-		ui := users[index].UserId
-		index++
+		ui := users[nearest_user_count-1].UserId
+		nearest_user_count++
 
 		if AreFriends(db, userid, ui) {
 			result_set = append(result_set, ui)
@@ -51,3 +52,27 @@ func NearestFriends(db *mgo.Database, userid int, long float64, lat float64, k i
 
 	return result_set
 }
+
+// Algorithm 1 (NF1)
+// 1. F = GetFriends(u), R = ∅
+// 2. For each user ui ∈ F, compute GetUserLocation(ui)
+// 3. Sort F in ascending order of ||q, ui||
+// 4. Insert the first k entries of F into R
+// 5. Return R
+// func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int) []int {
+//  friends := GetFriends(db, userid)
+//  friends_locations := make([]UserLocation, 0, 0)
+
+//  for _, friend := range friends {
+//    user_location := GetUserLocation(db, friend)
+//    friends_locations = append(friends_locations, user_location)
+//  }
+
+//  //TODO: sort
+
+//  for i := 0; i < k; i++ {
+//    result_set = append(result_set, friends_locations[i])
+//  }
+
+//  return result_set
+// }

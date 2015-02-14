@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	_ "fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -64,7 +64,7 @@ func GetUserLocation(db *mgo.Database, userid int) UserLocation {
 	return location
 }
 
-func RangeUsers(db *mgo.Database, long float64, lat float64, scope int) []UserLocation {
+func RangeUsers(db *mgo.Database, coordinates Coordinates, scope int) []UserLocation {
 	var res []UserLocation
 	collection := db.C(GM_COLLECTION)
 
@@ -73,7 +73,7 @@ func RangeUsers(db *mgo.Database, long float64, lat float64, scope int) []UserLo
 			"$nearSphere": bson.M{
 				"$geometry": bson.M{
 					"type":        "Point",
-					"coordinates": []float64{long, lat},
+					"coordinates": []float64{coordinates.long, coordinates.lat},
 				},
 				"$maxDistance": scope,
 			},
@@ -87,7 +87,7 @@ func RangeUsers(db *mgo.Database, long float64, lat float64, scope int) []UserLo
 	return res
 }
 
-func NearestUsers(db *mgo.Database, long float64, lat float64, k int) []UserLocation {
+func NearestUsers(db *mgo.Database, coordinates Coordinates, k int) []UserLocation {
 	var res []UserLocation
 	collection := db.C(GM_COLLECTION)
 
@@ -96,7 +96,7 @@ func NearestUsers(db *mgo.Database, long float64, lat float64, k int) []UserLoca
 			"$nearSphere": bson.M{
 				"$geometry": bson.M{
 					"type":        "Point",
-					"coordinates": []float64{long, lat},
+					"coordinates": []float64{coordinates.long, coordinates.lat},
 				},
 			},
 		},

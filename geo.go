@@ -6,6 +6,8 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
+var _ = fmt //debug
+
 //User u, location q, radius r
 //1. U = RangeUsers(q, r), R = ∅
 //2. For each user ui ∈ U
@@ -32,9 +34,8 @@ func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) 
 // 3. ui = NextNearestUser(q)
 // 4. If AreFriends(u, ui), add ui into R
 // 5. Return R
-func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int) ([]int, []UserLocation) {
-	resultSet := make([]int, 0, 0)
-	resultSetLocs := make([]UserLocation, 0, 0)
+func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int) UserLocations {
+	resultSet := make([]UserLocation, 0, 0)
 	nearestUserCount := 1
 
 	for len(resultSet) < k {
@@ -46,14 +47,13 @@ func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int
 		ui := users[nearestUserCount-1].UserId
 
 		if AreFriends(db, userid, ui) {
-			resultSet = append(resultSet, ui)
-			resultSetLocs = append(resultSetLocs, users[nearestUserCount-1])
+			resultSet = append(resultSet, users[nearestUserCount-1])
 		}
 		nearestUserCount++
 
 	}
 
-	return resultSet, resultSetLocs
+	return resultSet
 }
 
 // Input: Location q, positive integer m
@@ -83,16 +83,16 @@ func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int
 // 23. Return R
 func NearestStarGroup(db *mgo.Database, q Coordinates, m int) {
 	bs := 0.0 //Inf
-	// bun := 0.0
+	bun := 0.0
 	// resultSet := 0
 	// fseen := 0
 	// i := 1
-
+	nearestUserCount := 1
 	nu := NearestUsers(db, q, 1)
 	u1 := nu[0].UserId
 
 	NSGu1 := make([]UserLocation, 0, 1)
-	_, nf := NearestFriends(db, u1, q, m-1)
+	nf := NearestFriends(db, u1, q, m-1)
 
 	NSGu1 = append(NSGu1, nf...)
 
@@ -100,10 +100,17 @@ func NearestStarGroup(db *mgo.Database, q Coordinates, m int) {
 		dist := q.CalcDistance(loc) //find distance of each userloc to q point
 		bs += dist                  //sum distances to bs
 	}
-	fmt.Println("Distance =", bs)
-	// for bun < bs {
 
-	// }
+	for bun < bs {
+		users := NearestUsers(db, coordinates, nearestUserCount)
+		if nearestUserCount > len(users) {
+			break
+		}
+
+		ui := users[nearestUserCount-1].UserId
+		friends := RangeFriends(ui, q, bs)
+
+	}
 
 }
 

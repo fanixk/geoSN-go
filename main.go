@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	DATABASE      = "geosn"
-	SM_COLLECTION = "sm"
-	GM_COLLECTION = "gm"
+	Database     = "geosn"
+	SmCollection = "sm"
+	GmCollection = "gm"
 )
 
 type User struct {
@@ -26,6 +26,7 @@ type UserLocation struct {
 	UserId   int           `bson:"userid" json:"userid"`
 	Location GeoJson       `bson:"location" json:"location"`
 }
+type UserLocations []UserLocation
 
 type GeoJson struct {
 	Type        string    `json:"-"`
@@ -49,7 +50,7 @@ func main() {
 	defer session.Close()
 	// session.SetMode(mgo.Monotonic, true)
 
-	db := session.DB(DATABASE)
+	db := session.DB(Database)
 	coordinates := Coordinates{long: 3.575430130586027, lat: -65.18024627119303}
 	scope := 500 // max distance in metres
 	userid := 46
@@ -62,8 +63,8 @@ func main() {
 	notF := AreFriends(db, userid, 3) //false
 	isF := AreFriends(db, userid, 45) //true
 	rf := RangeFriends(db, userid, coordinates, scope)
-	_, nf := NearestFriends(db, userid, coordinates, k)
-
+	nf := NearestFriends(db, userid, coordinates, k)
+	nfIds := nf.GetUserIDs()
 	ru := RangeUsers(db, coordinates, scope)
 	nu := NearestUsers(db, coordinates, k)
 
@@ -83,7 +84,7 @@ func main() {
 	fmt.Println("Is friends with UserID:3 =", notF)
 	fmt.Println("Is friends with UserID:45 =", isF)
 	fmt.Println("Has friends within", scope, "meters with UserIDs=", rf)
-	fmt.Println("His", k, "-th nearest friend(s) have UserID(s)", nf)
+	fmt.Println("His", k, "-th nearest friend(s) have UserID(s)", nfIds)
 	fmt.Println("")
 
 	fmt.Println("Users within", scope, "meter are:")

@@ -7,15 +7,15 @@ for (var i = 1; i <= 200; i++) {
   var friends_list = [];
   switch (i) {
     case 1:
-      friends_list = [i + 1];
+      friends_list = [i + 1, 200];
       break;
     case 200:
-      friends_list = [i - 1];
+      friends_list = [1, i - 1];
       break;
     default:
-      friends_list = [i + 1, i - 1];
+      friends_list = [i - 1, i + 1];
   }
-  
+
   db.sm.insert({
     "userid": i,
     "username": "User" + i,

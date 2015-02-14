@@ -9,7 +9,7 @@ import (
 func GetFriends(db *mgo.Database, userid int) []int {
 	var result []User
 	collection := db.C(SM_COLLECTION)
-	friends_list := make([]int, 0, 1)
+	friendsList := make([]int, 0, 1)
 
 	err := collection.Find(bson.M{"userid": userid}).Select(bson.M{"friends_list": 1}).All(&result)
 	if err != nil {
@@ -18,10 +18,10 @@ func GetFriends(db *mgo.Database, userid int) []int {
 
 	for _, friend := range result {
 		for _, f := range friend.Friends {
-			friends_list = append(friends_list, f)
+			friendsList = append(friendsList, f)
 		}
 	}
-	return friends_list
+	return friendsList
 }
 
 func AreFriends(db *mgo.Database, userid1 int, userid2 int) bool {

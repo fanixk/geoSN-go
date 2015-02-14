@@ -59,14 +59,15 @@ func main() {
 
 	ul := GetUserLocation(db, userid)
 	gf := GetFriends(db, userid)
-	not_f := AreFriends(db, userid, 3) //false
-	is_f := AreFriends(db, userid, 45) //true
+	notF := AreFriends(db, userid, 3) //false
+	isF := AreFriends(db, userid, 45) //true
 	rf := RangeFriends(db, userid, coordinates, scope)
-	nf := NearestFriends(db, userid, coordinates, k)
+	_, nf := NearestFriends(db, userid, coordinates, k)
 
 	ru := RangeUsers(db, coordinates, scope)
 	nu := NearestUsers(db, coordinates, k)
 
+	// NearestStarGroup(db, coordinates, 3)
 	//show actual users
 	// users := GetUsers(db, results)
 
@@ -79,8 +80,8 @@ func main() {
 	fmt.Println("User with UserID:", userid)
 	fmt.Println("Is at Coordinates:", ul.long, ul.lat)
 	fmt.Println("Has friends with UserIDs:", gf)
-	fmt.Println("Is friends with UserID:3 =", not_f)
-	fmt.Println("Is friends with UserID:45 =", is_f)
+	fmt.Println("Is friends with UserID:3 =", notF)
+	fmt.Println("Is friends with UserID:45 =", isF)
 	fmt.Println("Has friends within", scope, "meters with UserIDs=", rf)
 	fmt.Println("His", k, "-th nearest friend(s) have UserID(s)", nf)
 	fmt.Println("")

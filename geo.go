@@ -1,19 +1,17 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"github.com/kellydunn/golang-geo"
 	"gopkg.in/mgo.v2"
 )
-
-var _ = fmt //debug
 
 //User u, location q, radius r
 //1. U = RangeUsers(q, r), R = ∅
 //2. For each user ui ∈ U
 //3.  If AreFriends(u, ui), add ui into R
 //4. Return R
-func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) []int {
+func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) []int { //TODO:return UserLocations
 	var users []UserLocation
 	rangeFriendsList := make([]int, 0, 1)
 
@@ -102,14 +100,14 @@ func NearestStarGroup(db *mgo.Database, q Coordinates, m int) {
 	}
 
 	for bun < bs {
-		users := NearestUsers(db, coordinates, nearestUserCount)
+		users := NearestUsers(db, q, nearestUserCount)
 		if nearestUserCount > len(users) {
 			break
 		}
 
 		ui := users[nearestUserCount-1].UserId
-		friends := RangeFriends(ui, q, bs)
-
+		friends := RangeFriends(db, ui, q, int(bs))
+		_ = friends
 	}
 
 }

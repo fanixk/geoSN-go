@@ -64,7 +64,6 @@ func main() {
 	isF := AreFriends(db, userid, 45) //true
 	rf := RangeFriends(db, userid, coordinates, scope)
 	nf := NearestFriends(db, userid, coordinates, k)
-	nfIds := nf.GetUserIDs()
 	ru := RangeUsers(db, coordinates, scope)
 	nu := NearestUsers(db, coordinates, k)
 
@@ -84,7 +83,7 @@ func main() {
 	fmt.Println("Is friends with UserID:3 =", notF)
 	fmt.Println("Is friends with UserID:45 =", isF)
 	fmt.Println("Has friends within", scope, "meters with UserIDs=", rf)
-	fmt.Println("His", k, "-th nearest friend(s) have UserID(s)", nfIds)
+	fmt.Println("His", k, "-th nearest friend(s) have UserID(s)", nf.GetUserIDs())
 	fmt.Println("")
 
 	fmt.Println("Users within", scope, "meter are:")

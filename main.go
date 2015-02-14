@@ -52,7 +52,7 @@ func main() {
 
 	db := session.DB(Database)
 	coordinates := Coordinates{long: 3.575430130586027, lat: -65.18024627119303}
-	scope := 500 // max distance in metres
+	scope := 50000000 // max distance in metres
 	userid := 46
 	k := 2
 
@@ -82,12 +82,12 @@ func main() {
 	fmt.Println("Has friends with UserIDs:", gf)
 	fmt.Println("Is friends with UserID:3 =", notF)
 	fmt.Println("Is friends with UserID:45 =", isF)
-	fmt.Println("Has friends within", scope, "meters with UserIDs=", rf)
+	fmt.Println("Has friends within", scope, "meters with UserIDs=", rf.GetUserIDs())
 	fmt.Println("His", k, "-th nearest friend(s) have UserID(s)", nf.GetUserIDs())
 	fmt.Println("")
 
 	fmt.Println("Users within", scope, "meter are:")
-	fmt.Println(ru)
+	fmt.Println(len(ru))
 	fmt.Println("")
 
 	fmt.Println(k, "users nearest to", coordinates, "are:")

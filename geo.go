@@ -11,15 +11,15 @@ import (
 //2. For each user ui ∈ U
 //3.  If AreFriends(u, ui), add ui into R
 //4. Return R
-func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) []int { //TODO:return UserLocations
+func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) UserLocations {
 	var users []UserLocation
-	rangeFriendsList := make([]int, 0, 1)
+	rangeFriendsList := make(UserLocations, 0, 1)
 
 	users = RangeUsers(db, coordinates, r)
 
 	for _, user := range users {
-		if user.UserId == userid {
-			rangeFriendsList = append(rangeFriendsList, user.UserId)
+		if AreFriends(db, userid, user.UserId) {
+			rangeFriendsList = append(rangeFriendsList, user)
 		}
 	}
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	_ "encoding/json"
 	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -51,27 +51,45 @@ func main() {
 
 	db := session.DB(DATABASE)
 	coordinates := Coordinates{long: 3.575430130586027, lat: -65.18024627119303}
-	_ = coordinates
 	scope := 500 // max distance in metres
-	_ = scope
 	userid := 46
-	_ = userid
+	k := 2
 
-	// results := RangeFriends(db, userid, coordinates, scope)
-	// results := GetFriends(db, 1)
-	// users := GetUserLocation(db, userid)
-	// results := AreFriends(db, 1, 3) //false
-	// results := AreFriends(colsm, 1, 2) //true
-	// users := RangeUsers(db, coordinates, scope)
-	// users := NearestUsers(db, coordinates, 3)
-	results := NearestFriends(db, 45, coordinates, 1)
+	//TODO: return both users and list of user ids when needed
+
+	ul := GetUserLocation(db, userid)
+	gf := GetFriends(db, userid)
+	not_f := AreFriends(db, userid, 3) //false
+	is_f := AreFriends(db, userid, 45) //true
+	rf := RangeFriends(db, userid, coordinates, scope)
+	nf := NearestFriends(db, userid, coordinates, k)
+
+	ru := RangeUsers(db, coordinates, scope)
+	nu := NearestUsers(db, coordinates, k)
 
 	//show actual users
-	users := GetUsers(db, results)
+	// users := GetUsers(db, results)
 
 	// convert it to JSON so it can be displayed
-	formatter := json.MarshalIndent
-	response, err := formatter(users, " ", "   ")
+	// formatter := json.MarshalIndent
 
-	fmt.Println(string(response))
+	// response, _ := formatter(users, " ", "   ")
+	// fmt.Println(string(response))
+
+	fmt.Println("User with UserID:", userid)
+	fmt.Println("Is at Coordinates:", ul.long, ul.lat)
+	fmt.Println("Has friends with UserIDs:", gf)
+	fmt.Println("Is friends with UserID:3 =", not_f)
+	fmt.Println("Is friends with UserID:45 =", is_f)
+	fmt.Println("Has friends within", scope, "meters with UserIDs=", rf)
+	fmt.Println("His", k, "-th nearest friend(s) have UserID(s)", nf)
+	fmt.Println("")
+
+	fmt.Println("Users within", scope, "meter are:")
+	fmt.Println(ru)
+	fmt.Println("")
+
+	fmt.Println(k, "users nearest to", coordinates, "are:")
+	fmt.Println(nu)
+	fmt.Println("")
 }

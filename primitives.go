@@ -52,7 +52,7 @@ func AreFriends(db *mgo.Database, userid1 int, userid2 int) bool {
 	return false
 }
 
-func GetUserLocation(db *mgo.Database, userid int) UserLocation {
+func GetUserLocation(db *mgo.Database, userid int) Coordinates {
 	collection := db.C(GM_COLLECTION)
 	var location UserLocation
 	err := collection.Find(bson.M{"userid": userid}).One(&location)
@@ -61,7 +61,11 @@ func GetUserLocation(db *mgo.Database, userid int) UserLocation {
 		panic(err)
 	}
 
-	return location
+	coordinates := Coordinates{
+		long: location.Location.Coordinates[0],
+		lat:  location.Location.Coordinates[1],
+	}
+	return coordinates
 }
 
 func RangeUsers(db *mgo.Database, coordinates Coordinates, scope int) []UserLocation {

@@ -33,7 +33,6 @@ func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) 
 // 5. Return R
 func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int) []int {
 	result_set := make([]int, 0, 0)
-	index := 0
 	nearest_user_count := 1
 
 	for len(result_set) < k {

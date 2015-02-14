@@ -108,3 +108,21 @@ func NearestUsers(db *mgo.Database, coordinates Coordinates, k int) []UserLocati
 
 	return res
 }
+
+func GetUsers(db *mgo.Database, userids []int) []User {
+	var users []User
+	collection := db.C(SM_COLLECTION)
+	err := collection.Find(
+		bson.M{
+			"userid": bson.M{
+				"$in": userids,
+			},
+		},
+	).All(&users)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}

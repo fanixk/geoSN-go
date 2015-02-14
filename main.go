@@ -50,29 +50,28 @@ func main() {
 	// session.SetMode(mgo.Monotonic, true)
 
 	db := session.DB(DATABASE)
-	coordinates := Coordinates{long: 151.701642, lat: -33.690647}
+	coordinates := Coordinates{long: 3.575430130586027, lat: -65.18024627119303}
 	_ = coordinates
-	scope := 50000 // max distance in metres
+	scope := 500 // max distance in metres
 	_ = scope
-	userid := 10
+	userid := 46
 	_ = userid
-
-	//TODO:
-	//implement method that returns users when given an array of userids
-	//to be used as utility method
 
 	// results := RangeFriends(db, userid, coordinates, scope)
 	// results := GetFriends(db, 1)
-	// results := GetUserLocation(db, 2)
+	// users := GetUserLocation(db, userid)
 	// results := AreFriends(db, 1, 3) //false
 	// results := AreFriends(colsm, 1, 2) //true
-	// results := RangeUsers(db, coordinates, scope)
-	// results := NearestUsers(db, coordinates, 3)
-	results := NearestFriends(db, 45, coordinates, 3)
+	// users := RangeUsers(db, coordinates, scope)
+	// users := NearestUsers(db, coordinates, 3)
+	results := NearestFriends(db, 45, coordinates, 1)
+
+	//show actual users
+	users := GetUsers(db, results)
 
 	// convert it to JSON so it can be displayed
 	formatter := json.MarshalIndent
-	response, err := formatter(results, " ", "   ")
+	response, err := formatter(users, " ", "   ")
 
 	fmt.Println(string(response))
 }

@@ -4,9 +4,12 @@ import (
 	_ "fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 func GetFriends(db *mgo.Database, userid int) []int {
+	defer timeTrack(time.Now(), "GetFriends")
+
 	var result []User
 	collection := db.C(SmCollection)
 	friendsList := make([]int, 0, 1)
@@ -25,6 +28,8 @@ func GetFriends(db *mgo.Database, userid int) []int {
 }
 
 func AreFriends(db *mgo.Database, userid1 int, userid2 int) bool {
+	// defer timeTrack(time.Now(), "AreFriends")
+
 	collection := db.C(SmCollection)
 	//we suppose if userid2 exists in users1 friends_list then the opposite holds true
 	//db.sm.count({   "$and": [ {userid: userid1}, { "friends_list":  { "$in": [ userid2 ] }}] })
@@ -53,6 +58,8 @@ func AreFriends(db *mgo.Database, userid1 int, userid2 int) bool {
 }
 
 func RangeUsers(db *mgo.Database, coordinates Coordinates, scope int) []UserLocation {
+	defer timeTrack(time.Now(), "RangeUsers")
+
 	var res []UserLocation
 	collection := db.C(GmCollection)
 
@@ -76,6 +83,8 @@ func RangeUsers(db *mgo.Database, coordinates Coordinates, scope int) []UserLoca
 }
 
 func NearestUsers(db *mgo.Database, coordinates Coordinates, k int) []UserLocation {
+	// defer timeTrack(time.Now(), "NearestUsers")
+
 	var res []UserLocation
 	collection := db.C(GmCollection)
 
@@ -97,6 +106,24 @@ func NearestUsers(db *mgo.Database, coordinates Coordinates, k int) []UserLocati
 	return res
 }
 
+func GetUserLocation(db *mgo.Database, userid int) Coordinates {
+	defer timeTrack(time.Now(), "GetUserLocation")
+
+	collection := db.C(GmCollection)
+	var location UserLocation
+	err := collection.Find(bson.M{"userid": userid}).One(&location)
+
+	if err != nil {
+		panic(err)
+	}
+
+	coordinates := Coordinates{
+		long: location.Location.Coordinates[0],
+		lat:  location.Location.Coordinates[1],
+	}
+	return coordinates
+}
+
 func GetUsers(db *mgo.Database, userids []int) []User {
 	var users []User
 	collection := db.C(GmCollection)
@@ -113,22 +140,6 @@ func GetUsers(db *mgo.Database, userids []int) []User {
 	}
 
 	return users
-}
-
-func GetUserLocation(db *mgo.Database, userid int) Coordinates {
-	collection := db.C(GmCollection)
-	var location UserLocation
-	err := collection.Find(bson.M{"userid": userid}).One(&location)
-
-	if err != nil {
-		panic(err)
-	}
-
-	coordinates := Coordinates{
-		long: location.Location.Coordinates[0],
-		lat:  location.Location.Coordinates[1],
-	}
-	return coordinates
 }
 
 func (ul UserLocations) GetUserIDs() []int {

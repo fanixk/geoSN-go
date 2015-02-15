@@ -6,6 +6,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"log"
+	"time"
 )
 
 const (
@@ -93,4 +94,9 @@ func main() {
 	fmt.Println(k, "users nearest to", coordinates, "are:")
 	fmt.Println(nu)
 	fmt.Println("")
+}
+
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	log.Printf("%s took %s", name, elapsed)
 }

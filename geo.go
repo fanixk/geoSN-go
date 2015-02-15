@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"github.com/kellydunn/golang-geo"
 	"gopkg.in/mgo.v2"
+	"time"
 )
 
 //User u, location q, radius r
@@ -12,6 +13,8 @@ import (
 //3.  If AreFriends(u, ui), add ui into R
 //4. Return R
 func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) UserLocations {
+	defer timeTrack(time.Now(), "RangeFriends")
+
 	var users []UserLocation
 	rangeFriendsList := make(UserLocations, 0, 1)
 
@@ -33,6 +36,8 @@ func RangeFriends(db *mgo.Database, userid int, coordinates Coordinates, r int) 
 // 4. If AreFriends(u, ui), add ui into R
 // 5. Return R
 func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int) UserLocations {
+	// defer timeTrack(time.Now(), "NearestFriends")
+
 	resultSet := make([]UserLocation, 0, 0)
 	nearestUserCount := 1
 
@@ -80,6 +85,8 @@ func NearestFriends(db *mgo.Database, userid int, coordinates Coordinates, k int
 // 22.      R = (NSGu), bs = adist(q, NSGu)
 // 23. Return R
 func NearestStarGroup(db *mgo.Database, q Coordinates, m int) {
+	defer timeTrack(time.Now(), "NearestStarGroup")
+
 	bs := 0.0 //Inf
 	bun := 0.0
 	// resultSet := 0

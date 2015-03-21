@@ -57,8 +57,6 @@ func main() {
 	userid := 46
 	k := 2
 
-	//TODO: return both users and list of user ids when needed
-
 	ul := GetUserLocation(db, userid)
 	gf := GetFriends(db, userid)
 	notF := AreFriends(db, userid, 3) //false
@@ -68,7 +66,6 @@ func main() {
 	ru := RangeUsers(db, coordinates, scope)
 	nu := NearestUsers(db, coordinates, k)
 
-	// NearestStarGroup(db, coordinates, 3)
 	//show actual users
 	// users := GetUsers(db, results)
 

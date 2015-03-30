@@ -93,16 +93,16 @@ func NearestFriends1(db *mgo.Database, userid int, coordinates Coordinates, k in
 	}
 
 	var keys []float64
-	for k := range nf1Map {
-		keys = append(keys, k)
+	for key := range nf1Map {
+		keys = append(keys, key)
 	}
 	sort.Float64s(keys)
 
-	for _, k := range keys {
-		resultSet = append(resultSet, nf1Map[k])
+	for i := 0; i < k; i++ {
+		resultSet = append(resultSet, nf1Map[keys[i]])
 	}
 
-	return resultSet[0:k]
+	return resultSet
 }
 
 /* Algorithm 2 (NF2) */

@@ -35,8 +35,8 @@ type GeoJson struct {
 }
 
 type Coordinates struct {
-	long float64
 	lat  float64
+	long float64
 }
 
 func main() {
@@ -61,8 +61,8 @@ func main() {
 	gf := GetFriends(db, userid)
 	notF := AreFriends(db, userid, 3) //false
 	isF := AreFriends(db, userid, 45) //true
-	rf := RangeFriends(db, userid, coordinates, scope)
-	nf := NearestFriends(db, userid, coordinates, k)
+	rf := RangeFriends1(db, userid, coordinates, scope)
+	nf := NearestFriends1(db, userid, coordinates, k)
 	ru := RangeUsers(db, coordinates, scope)
 	nu := NearestUsers(db, coordinates, k)
 
@@ -76,7 +76,7 @@ func main() {
 	// fmt.Println(string(response))
 
 	fmt.Println("User with UserID:", userid)
-	fmt.Println("Is at Coordinates:", ul.long, ul.lat)
+	fmt.Println("Is at Coordinates:", ul.Location.Coordinates[0], ul.Location.Coordinates[1])
 	fmt.Println("Has friends with UserIDs:", gf)
 	fmt.Println("Is friends with UserID:3 =", notF)
 	fmt.Println("Is friends with UserID:45 =", isF)

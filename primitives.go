@@ -1,13 +1,14 @@
 package main
 
 import (
+	_ "fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"time"
+	_ "time"
 )
 
 func GetFriends(db *mgo.Database, userid int) []int {
-	defer timeTrack(time.Now(), "GetFriends")
+	// defer timeTrack(time.Now(), "GetFriends")
 
 	var result []User
 	collection := db.C(SmCollection)
@@ -57,7 +58,7 @@ func AreFriends(db *mgo.Database, userid1 int, userid2 int) bool {
 }
 
 func RangeUsers(db *mgo.Database, coordinates Coordinates, scope int) []UserLocation {
-	defer timeTrack(time.Now(), "RangeUsers")
+	// defer timeTrack(time.Now(), "RangeUsers")
 
 	var res []UserLocation
 	collection := db.C(GmCollection)
@@ -67,7 +68,7 @@ func RangeUsers(db *mgo.Database, coordinates Coordinates, scope int) []UserLoca
 			"$nearSphere": bson.M{
 				"$geometry": bson.M{
 					"type":        "Point",
-					"coordinates": []float64{coordinates.long, coordinates.lat},
+					"coordinates": []float64{coordinates.lat, coordinates.long},
 				},
 				"$maxDistance": scope,
 			},
@@ -92,7 +93,7 @@ func NearestUsers(db *mgo.Database, coordinates Coordinates, k int) []UserLocati
 			"$nearSphere": bson.M{
 				"$geometry": bson.M{
 					"type":        "Point",
-					"coordinates": []float64{coordinates.long, coordinates.lat},
+					"coordinates": []float64{coordinates.lat, coordinates.long},
 				},
 			},
 		},
@@ -105,8 +106,8 @@ func NearestUsers(db *mgo.Database, coordinates Coordinates, k int) []UserLocati
 	return res
 }
 
-func GetUserLocation(db *mgo.Database, userid int) Coordinates {
-	defer timeTrack(time.Now(), "GetUserLocation")
+func GetUserLocation(db *mgo.Database, userid int) UserLocation {
+	// defer timeTrack(time.Now(), "GetUserLocation")
 
 	collection := db.C(GmCollection)
 	var location UserLocation
@@ -116,11 +117,7 @@ func GetUserLocation(db *mgo.Database, userid int) Coordinates {
 		panic(err)
 	}
 
-	coordinates := Coordinates{
-		long: location.Location.Coordinates[0],
-		lat:  location.Location.Coordinates[1],
-	}
-	return coordinates
+	return location
 }
 
 func GetUsers(db *mgo.Database, userids []int) []User {

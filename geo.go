@@ -81,25 +81,25 @@ func RangeFriends3(db *mgo.Database, userid int, coordinates Coordinates, r int)
 // 5. Return R
 func NearestFriends1(db *mgo.Database, userid int, coordinates Coordinates, k int) UserLocations {
 	defer timeTrack(time.Now(), "NearestFriends1")
+	var keys []float64
 
 	resultSet := make([]UserLocation, 0, 1)
-	nf1Map := make(map[float64]UserLocation)
+	nfMap := make(map[float64]UserLocation)
 	friends := GetFriends(db, userid)
 
 	for _, friend := range friends {
 		userLocation := GetUserLocation(db, friend)
 		dist := coordinates.CalcDistance(userLocation)
-		nf1Map[dist] = userLocation
+		nfMap[dist] = userLocation
 	}
 
-	var keys []float64
-	for key := range nf1Map {
+	for key := range nfMap {
 		keys = append(keys, key)
 	}
 	sort.Float64s(keys)
 
 	for i := 0; i < k; i++ {
-		resultSet = append(resultSet, nf1Map[keys[i]])
+		resultSet = append(resultSet, nfMap[keys[i]])
 	}
 
 	return resultSet

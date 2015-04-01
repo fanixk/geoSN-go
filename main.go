@@ -49,7 +49,7 @@ func main() {
 	}
 
 	defer session.Close()
-	// session.SetMode(mgo.Monotonic, true)
+	session.SetMode(mgo.Monotonic, true)
 
 	db := session.DB(Database)
 	coordinates := Coordinates{long: 3.575430130586027, lat: -65.18024627119303}
@@ -61,19 +61,16 @@ func main() {
 	gf := GetFriends(db, userid)
 	notF := AreFriends(db, userid, 3) //false
 	isF := AreFriends(db, userid, 45) //true
+
 	rf := RangeFriends1(db, userid, coordinates, scope)
 	nf := NearestFriends1(db, userid, coordinates, k)
+	_ = RangeFriends2(db, userid, coordinates, scope)
+	_ = NearestFriends2(db, userid, coordinates, k)
+	_ = RangeFriends3(db, userid, coordinates, scope)
+	_ = NearestFriends3(db, userid, coordinates, k)
+
 	ru := RangeUsers(db, coordinates, scope)
 	nu := NearestUsers(db, coordinates, k)
-
-	//show actual users
-	// users := GetUsers(db, results)
-
-	// convert it to JSON so it can be displayed
-	// formatter := json.MarshalIndent
-
-	// response, _ := formatter(users, " ", "   ")
-	// fmt.Println(string(response))
 
 	fmt.Println("User with UserID:", userid)
 	fmt.Println("Is at Coordinates:", ul.Location.Coordinates[0], ul.Location.Coordinates[1])

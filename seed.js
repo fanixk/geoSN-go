@@ -3,13 +3,13 @@ use geosn;
 db.sm.drop();
 db.gm.drop();
 
-for (var i = 1; i <= 200; i++) {
+for (var i = 1; i <= 20000; i++) {
   var friends_list = [];
   switch (i) {
     case 1:
-      friends_list = [i + 1, 200];
+      friends_list = [i + 1, 20000];
       break;
-    case 200:
+    case 20000:
       friends_list = [1, i - 1];
       break;
     default:
@@ -23,7 +23,7 @@ for (var i = 1; i <= 200; i++) {
   });
 }
 
-for (i = 1; i <= 200; i++) {
+for (i = 1; i <= 20000; i++) {
   var random_long = Math.random() * (180 + 180) - 180;
   var random_lat = Math.random() * (90 + 90) - 90;
 
